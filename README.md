@@ -6,6 +6,11 @@ to be retrained with the same cadence, necessitating an end-to-end pipeline that
 
 In this project you will build such a pipeline.
 
+## SUBMISSION LINKS
+
+- [Weights & Biases Public Project](https://wandb.ai/dallas-taylor96-western-governors-university/nyc_airbnb?nw=nwuserdallastaylor96)
+- [Public GitHub Repository](https://github.com/de-taylor/D501-MLOps-Project1)
+
 ## Table of contents
 
 - [Preliminary steps](#preliminary-steps)
