@@ -47,9 +47,9 @@ def go(config: DictConfig):
                 env_manager="conda",
                 parameters={
                     "sample": config["etl"]["sample"],
-                    "artifact_name": "sample.csv",
-                    "artifact_type": "raw_data",
-                    "artifact_description": "Raw file as downloaded"
+                    "artifact_name": config["etl"]["artifact_name"],
+                    "artifact_type": config["etl"]["artifact_type"],
+                    "artifact_description": config["etl"]["artifact_description"]
                 },
             )
 
@@ -59,10 +59,10 @@ def go(config: DictConfig):
                 os.path.join(root_path, "src", "basic_cleaning"),
                 "main",
                 parameters={
-                    "input_artifact": "nyc_airbnb/sample.csv:latest",
-                    "output_artifact": "clean_sample.csv",
-                    "output_type": "cleaned_data",
-                    "output_description": "The minimally cleaned dataset.",
+                    "input_artifact": config["data_cleaning"]["input_artifact"],
+                    "output_artifact": config["data_cleaning"]["output_artifact"],
+                    "output_type": config["data_cleaning"]["output_type"],
+                    "output_description": config["data_cleaning"]["output_description"],
                     "min_price": config["etl"]["min_price"],
                     "max_price": config["etl"]["max_price"]
                 }
@@ -73,8 +73,8 @@ def go(config: DictConfig):
                 os.path.join(root_path, "src", "data_check"),
                 "main",
                 parameters={
-                    "csv": "nyc_airbnb/clean_sample.csv:latest",
-                    "ref": "nyc_airbnb/sample.csv:reference",
+                    "csv": config["data_check"]["csv"],
+                    "ref": config["data_check"]["ref"],
                     "kl_threshold": config["data_check"]["kl_threshold"],
                     "min_price": config["etl"]["min_price"],
                     "max_price": config["etl"]["max_price"]
@@ -86,7 +86,7 @@ def go(config: DictConfig):
                 f"{config["main"]["components_repository"]}/train_val_test_split",
                 "main",
                 parameters={
-                    "input": "nyc_airbnb/clean_sample.csv:latest",
+                    "input": config["data_check"]["csv"],
                     "test_size": config["modeling"]["test_size"],
                     "random_seed": config["modeling"]["random_seed"],
                     "stratify_by": config["modeling"]["stratify_by"]
@@ -107,13 +107,13 @@ def go(config: DictConfig):
                 os.path.join(root_path, "src", "train_random_forest"),
                 "main",
                 parameters={
-                    "trainval_artifact": "nyc_airbnb/trainval_data.csv:latest",
+                    "trainval_artifact": config["modeling"]["trainval_artifact"],
                     "val_size": config["modeling"]["val_size"],
                     "random_seed": config["modeling"]["random_seed"],
                     "stratify_by": config["modeling"]["stratify_by"],
                     "rf_config": rf_config,
                     "max_tfidf_features": config["modeling"]["max_tfidf_features"],
-                    "output_artifact": "random_forest_export",
+                    "output_artifact": config["modeling"]["output_artifact"],
                 }
             )
 
@@ -122,8 +122,8 @@ def go(config: DictConfig):
                 f"{config["main"]["components_repository"]}/test_regression_model",
                 "main",
                 parameters={
-                    "mlflow_model": "nyc_airbnb/random_forest_export:prod",
-                    "test_dataset": "nyc_airbnb/test_data.csv:latest"
+                    "mlflow_model": config["test_regression_model"]["mlflow_model"],
+                    "test_dataset": config["test_regression_model"]["test_dataset"]
                 }
             )
 
