@@ -59,7 +59,7 @@ def go(config: DictConfig):
                 os.path.join(root_path, "src", "basic_cleaning"),
                 "main",
                 parameters={
-                    "input_artifact": "nyc_airbnb/sample.csv:v0",
+                    "input_artifact": "nyc_airbnb/sample.csv:latest",
                     "output_artifact": "clean_sample.csv",
                     "output_type": "cleaned_data",
                     "output_description": "The minimally cleaned dataset.",
@@ -69,10 +69,17 @@ def go(config: DictConfig):
             )
 
         if "data_check" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            _ = mlflow.run(
+                os.path.join(root_path, "src", "data_check"),
+                "main",
+                parameters={
+                    "csv": "nyc_airbnb/clean_sample.csv:latest",
+                    "ref": "nyc_airbnb/sample.csv:reference",
+                    "kl_threshold": config["data_check"]["kl_threshold"],
+                    "min_price": config["etl"]["min_price"],
+                    "max_price": config["etl"]["max_price"]
+                }
+            )
 
         if "data_split" in active_steps:
             ##################
